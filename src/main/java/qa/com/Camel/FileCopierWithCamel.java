@@ -7,10 +7,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 public class FileCopierWithCamel {
 
 	public static void main(String args[]) throws Exception {
-		while (true) {
-			System.out.println("RUNNING AGAIN");
 		copyFiles();
-		}
 	}
 
 	private static void copyFiles() throws Exception {

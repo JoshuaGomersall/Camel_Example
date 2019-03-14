@@ -10,7 +10,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 
 import javax.jms.ConnectionFactory;
 
-public class FtpTojMSExampleAdvanced {
+public class FtpTojMSExampleSorting {
 
 	public static void main(String args[]) throws Exception {
 		test();
@@ -24,21 +24,14 @@ public class FtpTojMSExampleAdvanced {
 			context.addRoutes(new RouteBuilder() {
 				@Override
 				public void configure() {
-					from("ftp://test.rebex.net?username=demo&password=password").process(new Processor() {
-
-						public void process(Exchange exchange) throws Exception {
-							System.out.println("WE JUST GOT " + exchange.getIn().getHeader("CamelFileName"));
-						}
-
-					}).to("activemq:queue:OtherPlayers");
-
-					
-					from("ftp://test.rebex.net/pub/example?username=demo&password=password").process(new Processor() {
-
-						public void process(Exchange exchange) throws Exception {
-							System.out.println("WE JUST GOT " + exchange.getIn().getHeader("CamelFileName"));
-						}
-					}).to("activemq:queue:HumanFighters");
+					from("ftp://test.rebex.net?username=demo&password=password").choice()
+							.when(header("CamelFileName").endsWith(".xml")).to("activemq:queue:XML")
+							.when(header("CamelFileName").endsWith(".csv")).to("activemq:queue:CSV")
+							.when(header("CamelFileName").endsWith(".txt")).to("activemq:queue:TXT")
+							.when(header("CamelFileName").endsWith(".png")).to("activemq:queue:PNG").otherwise()
+							.to("activemq:queue:Other")
+					.end()
+					.to("activemq:queue:ContinuedProcessing");
 				}
 			});
 			context.start();
