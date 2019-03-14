@@ -17,3 +17,6 @@ Adding a request to activeMQ on local host and sysing out the files that are sen
 
 
 Adding a request to activeMQ on local host using the property file
+
+
+Adding a request to activeMQ on local host and sort them based on file type
