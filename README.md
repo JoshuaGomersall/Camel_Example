@@ -20,3 +20,5 @@ Adding a request to activeMQ on local host using the property file
 
 
 Adding a request to activeMQ on local host and sort them based on file type
+
+Adding a request to activeMQ on local host to two queues at the same time
