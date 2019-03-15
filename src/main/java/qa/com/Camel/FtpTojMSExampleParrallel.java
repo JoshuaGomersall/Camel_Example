@@ -8,19 +8,23 @@ import org.apache.camel.impl.DefaultCamelContext;
 
 import javax.jms.ConnectionFactory;
 
-public class FtpTojMSExample {
+public class FtpTojMSExampleParrallel {
 
 	public static void main(String args[]) throws Exception {
+		test1();
+	}
+
+	public static void test1() throws Exception {
 		while (true) {
 			CamelContext context = new DefaultCamelContext();
 			ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://localhost");
 			context.addComponent("jms", JmsComponent.jmsComponentAutoAcknowledge(connectionFactory));
 			context.addRoutes(new RouteBuilder() {
+
 				@Override
 				public void configure() {
-					from("ftp://test.rebex.net?username=demo&password=password").to("activemq:queue:HumanFighters");
-
-					from("ftp://test.rebex.net/pub/example?username=demo&password=password").to("activemq:queue:HumanFighters");
+					from("ftp://test.rebex.net?username=demo&password=password").wireTap("activemq:queue:TxtWiredTapped").multicast().parallelProcessing()
+							.stopOnException().to("activemq:queue:Txt Files", "activemq:queue:Txt Orders");
 				}
 			});
 			context.start();
@@ -28,5 +32,4 @@ public class FtpTojMSExample {
 			context.stop();
 		}
 	}
-
 }
